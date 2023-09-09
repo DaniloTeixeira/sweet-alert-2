@@ -1,35 +1,49 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import Swal, { SweetAlertOptions } from 'sweetalert2';
+import { Observable, from, map, pluck } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <!--The content below is only a placeholder and can be replaced.-->
-    <div style="text-align:center" class="content">
-      <h1>
-        Welcome to {{title}}!
-      </h1>
-      <span style="display: block">{{ title }} app is running!</span>
-      <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-    </div>
-    <h2>Here are some links to help you start: </h2>
-    <ul>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-      </li>
-    </ul>
-    
+   <div>
+      <h1>Sweet Alert 2</h1> 
+      <button (click)="onOpenSweetAlert()">
+        Abrir Modal
+      </button>
+   </div>
   `,
-  styles: [],
+  styles: [
+    'div { display: flex; align-items: center; flex-direction: column; gap: 1rem }',
+    'button { width: 250px; padding: 1rem; background: indigo; color: #fff; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 1rem }',
+    'button:hover { background: purple }',
+    'h1 { font-size: 3rem; font-weight: 700; color: indigo }'
+  ],
 })
+
 export class AppComponent {
-  title = 'sweet-alert';
+
+  onOpenSweetAlert(): void {
+    this.notificationConfirm({
+      icon: 'error',
+          title: 'Você tem certeza disso?',
+          text: 'Essa ação não poderá ser cancelada',
+          showCancelButton: true,
+          showConfirmButton: true,
+          confirmButtonColor: 'green',
+          confirmButtonText: 'Confirmar',
+          cancelButtonText: 'Cancelar'
+    }).subscribe(console.log)
+  }
+
+  private notificationConfirm(options: SweetAlertOptions): Observable<boolean> {
+    return from(
+      Swal.fire({
+        icon: 'question',
+        ...options,
+      })
+    ).pipe(map(({ isConfirmed }) => isConfirmed));
+  }
 }
